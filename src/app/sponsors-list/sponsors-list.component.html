@@ -1,0 +1,45 @@
+<h2>Sponsors List</h2>
+<style>
+    .center-table {
+        margin: 0 auto;
+        width: fit-content;
+    }
+</style>
+<table  class="table table-striped center-table">
+    <thead>
+        <tr>
+           
+            <th>name</th>
+            <th>phonenumber</th>
+            <th>contactEmail</th>
+            <th>isActive</th>
+            <th>address</th>
+            <th>logoUrl</th>
+            <th>websiteUrl</th>
+            <th>Actions</th>
+    
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let sp of sponsors">
+           
+
+            <td> {{sp.name}}</td>
+            <td> {{sp.phonenumber}}</td>
+            <td> {{sp.contactEmail}}</td>
+            <td> {{sp.isActive}}</td>
+            <td> {{sp.address}}</td>
+            <td> {{sp.logoUrl}}</td>
+            <td> {{sp.websiteUrl}}</td>
+            <td> 
+              <button (click)="updateSponsor(sp)" class="btn btn-info">Update</button> 
+              <button (click)="DeleteSponsor(sp.id)" class="btn btn-danger" style="margin-left: 10px;">Delete</button>
+
+              
+
+
+
+            </td>
+        </tr>
+    </tbody>
+</table>
