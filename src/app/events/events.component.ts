@@ -13,6 +13,7 @@ export class EventsComponent implements OnInit {
   eventForm!: FormGroup;
   selectedEvent: any;
   events: any[] | undefined;
+  fileName= 'ExcelSheet.xlsx';
   
   constructor(private formBuilder: FormBuilder,private eventService:EventService) {
     this.eventService.getAllEvents().subscribe((events: any[]) => {
@@ -20,27 +21,64 @@ export class EventsComponent implements OnInit {
     });
   }
 
-  
-  fileName= 'ExcelSheet.xlsx';
-
   ngOnInit() {
-    this.eventForm = this.formBuilder.group({
-      name: ['', Validators.required],
-      number: ['', Validators.required],
-      starting_date: ['', Validators.required],
-      end_date: ['', Validators.required]
-    });
+    this.loadEvents();
+  }
+
+  loadEvents() {
+    this.eventService.getAllEvents().subscribe(
+      (response) => {
+        this.events = response;
+      },
+      (error) => {
+        console.error('Error loading events:', error);
+      }
+    );
   }
 
   onSubmit() {
     if (this.eventForm && this.eventForm.valid) {
       console.log(this.eventForm.value);
+      if (this.selectedEvent) {
+        this.updateEvent();
+      } else {
+        this.createEvent();
+      }
     }
   }
-  
+
+  createEvent() {
+    const event = this.eventForm.value;
+    this.eventService.createEvent(event).subscribe(
+      (response) => {
+        console.log('Event created:', response);
+        this.loadEvents();
+        this.eventForm.reset();
+      },
+      (error) => {
+        console.error('Error creating event:', error);
+      }
+    );
+  }
+
+  updateEvent() {
+    const event = this.eventForm.value;
+    event.number = this.selectedEvent.number; 
+    this.eventService.updateEvent(event).subscribe(
+      (response) => {
+        console.log('Event updated:', response);
+        this.loadEvents();
+        this.eventForm.reset();
+        this.selectedEvent = null;
+      },
+      (error) => {
+        console.error('Error updating event:', error);
+      }
+    );
+  }
+
   editEvent(event: any): void {
     this.selectedEvent = event;
-    // Set the event data to the form fields
     this.eventForm.patchValue({
       name: event.name,
       number: event.number,
@@ -54,19 +92,23 @@ export class EventsComponent implements OnInit {
   }
   deleteEvent(event: any): void {
     console.log('Delete event:', event);
+    this.eventService.deleteEvent(event).subscribe(
+      (response) => {
+        console.log('Event deleted:', response);
+        this.loadEvents(); // Refresh the event list after successful deletion
+      },
+      (error) => {
+        console.error('Error deleting event:', error);
+      }
+    );
   }
 
   exportexcel(): void
   {
-    /* pass here the table id */
     let element = document.getElementById('excel-table');
     const ws: XLSX.WorkSheet =XLSX.utils.table_to_sheet(element);
- 
-    /* generate workbook and add the worksheet */
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
- 
-    /* save to file */  
     XLSX.writeFile(wb, this.fileName);
  
   }
