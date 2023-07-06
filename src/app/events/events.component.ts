@@ -48,5 +48,6 @@ export class EventsComponent implements OnInit {
   deleteEvent(event: any): void {
     console.log('Delete event:', event);
   }
+
 }
 
