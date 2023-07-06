@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {  OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EventService } from '../event.service';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-events',
@@ -15,6 +16,8 @@ export class EventsComponent implements OnInit {
     this.events = this.eventService.getAllEvents(); }
 
   events: any[];
+  
+  fileName= 'ExcelSheet.xlsx';
 
   ngOnInit() {
     this.eventForm = this.formBuilder.group({
@@ -49,5 +52,19 @@ export class EventsComponent implements OnInit {
     console.log('Delete event:', event);
   }
 
+  exportexcel(): void
+  {
+    /* pass here the table id */
+    let element = document.getElementById('excel-table');
+    const ws: XLSX.WorkSheet =XLSX.utils.table_to_sheet(element);
+ 
+    /* generate workbook and add the worksheet */
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+ 
+    /* save to file */  
+    XLSX.writeFile(wb, this.fileName);
+ 
+  }
 }
 
