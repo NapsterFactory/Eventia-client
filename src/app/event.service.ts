@@ -1,35 +1,28 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventService {
-  events: any[] = [
-    { name: 'Event 1', number: 1, starting_date: '2023-07-01', end_date: '2023-07-05' },
-    { name: 'Event 2', number: 2, starting_date: '2023-07-10', end_date: '2023-07-15' }
-  ];
 
-  constructor() { }
+  private baseUrl = 'http://localhost:8080';
 
-  getAllEvents(): any[] {
-    return this.events;
+  constructor(private http: HttpClient) { }
+
+  getAllEvents() {
+    return this.http.get<any[]>(`${this.baseUrl}/events`);;
   }
 
-  createEvent(event: any): void {
-    this.events.push(event);
+  createEvent(event: any) {
+    return this.http.post<any>(`${this.baseUrl}/events`, event);
   }
 
-  updateEvent(event: any): void {
-    const index = this.events.findIndex(e => e.number === event.number);
-    if (index !== -1) {
-      this.events[index] = event;
-    }
+  updateEvent(event: any) {
+    return this.http.put<any>(`${this.baseUrl}/events/${event.number}`, event);
   }
 
-  deleteEvent(event: any): void {
-    const index = this.events.findIndex(e => e.number === event.number);
-    if (index !== -1) {
-      this.events.splice(index, 1);
-    }
+  deleteEvent(event: any) {
+    return this.http.delete<any>(`${this.baseUrl}/events/${event.number}`);
   }
 }

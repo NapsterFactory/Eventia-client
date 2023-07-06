@@ -12,10 +12,14 @@ import * as XLSX from 'xlsx';
 export class EventsComponent implements OnInit {
   eventForm!: FormGroup;
   selectedEvent: any;
+  events: any[] | undefined;
+  
   constructor(private formBuilder: FormBuilder,private eventService:EventService) {
-    this.events = this.eventService.getAllEvents(); }
+    this.eventService.getAllEvents().subscribe((events: any[]) => {
+      this.events = events;
+    });
+  }
 
-  events: any[];
   
   fileName= 'ExcelSheet.xlsx';
 
